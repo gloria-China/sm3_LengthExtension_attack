@@ -1,20 +1,172 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #coding:utf-8
 
-IV='7380166f4914b2b9172442d7da8a0600a96f30bc163138aae38dee4db0fb0e4e'
+def Fill(text):
+  
+    text_bin = ''
+    # text to bin
+    for ch in text:
+        ascii_ch = ord(ch)
+        text_bin = text_bin + '0' + bin(ascii_ch)[2:]
 
-def left(x,times): 
-    return x[times:]+x[:times]
+    # add 1
+    length = len(text_bin)
+
+    text_bin = text_bin + '1'
+
+    # add 0
+    while len(text_bin)%512!=448:
+        text_bin += '0'
+    length_bin = bin(length)[2:]
+
+    while len(length_bin)<64:
+            length_bin = '0' + length_bin
+
+    text_bin = text_bin + length_bin
+
+    return text_bin
+def Fill2(text1,text2):#c+padding+len_c+c_2
+    text_bin2 = ''
+    text_bin1 = ''
+    # text to bin
+    for ch1 in text1:
+        ascii_ch1 = ord(ch1)
+        text_bin1 = text_bin1 + '0' + bin(ascii_ch1)[2:]
+    for ch2 in text2:
+        ascii_ch2 = ord(ch2)
+        text_bin2 = text_bin2 + '0' + bin(ascii_ch2)[2:]
+
+    # add 1
+    length1=len(text_bin1)
+    length2=len(text_bin2)
+    text_bin1 = text_bin1 + '1'
+    length = len(text_bin2)+len(text_bin1)
+    
+    # add 0
+    while len(text_bin1)%512!=448:
+        text_bin1 += '0'
+ 
+    length_bin = bin(length)[2:]
+    length_bin1=bin(length1)[2:]
+    length_bin2=bin(length2)[2:]
+
+    addm=length_bin2+text_bin2+length_bin
+
+    while len(addm)<64:
+            addm = '0' + addm
+
+    text_bin22 = text_bin1+addm
+
+    return text_bin22
+
+def Fill_part(text3):
+    text_bin3 = ''
+    # text to bin
+    for ch3 in text3:
+        ascii_ch3 = ord(ch3)
+        text_bin3 = text_bin3 + '0' + bin(ascii_ch3)[2:]
+    # add 1
+    length3 = len(text_bin3)
+
+    text_bin3 = text_bin3 + '1'
+
+    # add 0
+    length_bin3 = bin(length3)[2:]
+
+    while len(length_bin3)<64:
+            length_bin3 = '0' + length_bin3
+
+    text_bin3 = text_bin3 + length_bin3
+    return text_bin3
+
+def Iteration(m,w):
+
+    IV = {}
+    IV[0] = '7380166f4914b2b9172442d7da8a0600a96f30bc163138aae38dee4db0fb0e4e'
+    length = len(m)
+    n = length//512
+    b = {}
+    for i in range(n):
+        b[i] = m[512*i:512*(i+1)]
+        w = Expand(b[i])
+        IV[i+1] = Compress(w,IV[i])
+    # print(b)
+    return IV[n]
 
 
-def XOR2(a,b):
-    return '{1:0{0}b}'.format(len(a), int(a, 2) ^ int(b, 2))
-def AND2(a, b):
-    return '{1:0{0}b}'.format(len(a), int(a, 2) & int(b, 2))
-def OR2(a, b):
-    return '{1:0{0}b}'.format(len(a), int(a, 2) | int(b, 2))
-def NOT2(a):
+
+def Mod32(a,b):
+  
+    c = (a + b)
+    d = c%(2**32)
+    ans = str(d)
+    return ans
+
+
+
+def Move(text, num):
+ 
+    text = str(text)
+    return (text[num:] + text[:num])
+
+
+
+def Xor(a,b):
+  
+    result =''
+    if len(a)!=len(b):
+        print('len(a)!=len(b)')
+        return False
+    for i in range(len(a)):
+        if a[i]==b[i]:
+            result += '0'
+        else:
+            result += '1'
+    return result
+
+
+def Xor3(a,b,c):
+  
+    return Xor(Xor(a,b),c)
+
+
+def Or(a,b):
+  
+    result =''
+    if len(a)!=len(b):
+        print('len(a)!=len(b)')
+        return False
+    for i in range(len(a)):
+        if (a[i]=='1')|(b[i]=='1'):
+            result += '1'
+        else:
+            result += '0'
+    return result
+
+def Or3(a,b,c):
+    return Or(Or(a,b),c)
+
+
+def And(a,b):
+  
+    result =''
+    if len(a)!=len(b):
+        print('len(a)!=len(b)')
+        return False
+    for i in range(len(a)):
+        if (a[i]=='1')&(b[i]=='1'):
+            result += '1'
+        else:
+            result += '0'
+    return result
+
+def And3(a,b,c):
+    return And(And(a,b),c)
+
+
+def Not(a):
+  
     result = ''
     for ch in a:
         if ch == '1':
@@ -24,138 +176,186 @@ def NOT2(a):
     return result
 
 
-def P1(x):
-    return XOR2(XOR2(x,left(x,15)),left(x,23))
-def P0(x):
-    return XOR2(XOR2(x,left(x,9)),left(x,17))
+
+def Substitute(x, mode):
+ 
+    if mode == 0:
+        ans = Xor3(x,Move(x,9),Move(x,17))
+    else:
+        ans = Xor3(x,Move(x,15),Move(x,23))
+    return ans
+
+
+def ZtoH(text):
+ 
+    text = str(text)
+    while len(text)<32:
+        text = '0' + text
+    text_16 = ''
+    for i in range(8):
+        tmp = hex(int(text[4*i:4*(i+1)],base = 2))[2:]
+        text_16 = text_16 + tmp   
+    return text_16
+
+def BtoH(text):
+    text = str(text)
+    while len(text)<32:
+        text = '0' + text
+    text_16 = ''
+    for i in range(len(text)//4):
+        tmp = hex(int(text[4*i:4*(i+1)],base = 2))[2:]
+        text_16 = text_16 + tmp
+    return text_16
+
+# 16->2
+def HtoB(text):
+    text_2 = ''
+    text = str(text)
+    for ch in text:
+        tmp = bin(int(ch,base = 16))[2:]
+        for i in range(4):
+            if len(tmp)%4!=0:
+                tmp = '0' + tmp
+        text_2 = text_2 + tmp   
+    while len(text_2)<32:
+        text_2 = '0' + text_2      
+    return text_2
+
+# 10->2
+def OtoB(text):
+    text_10 = ''
+    text = str(text)
+    tmp = bin(int(text,base = 10))[2:]
+    text_10 = text_10 + tmp  
+    while len(text_10)<32:
+        text_10 = '0' + text_10      
+    return text_10
+
+def OtoH(text):
+    text_10 = ''
+    text = str(text)
+    tmp = hex(int(text ,base = 10))[2:]
+    text_10 = text_10 + tmp     
+    while len(text_10)<8:
+        text_10 = '0' + text_10   
+    return text_10
+
+
+
+def Expand(b):
+ 
+    w = {}
+    for i in range(16):
+        w[i] = b[i*32:(i+1)*32]
+    for j in range(16, 68):
+        tmp = Xor3(w[j-16],w[j-9],Move(w[j-3],15))
+        tmp = Substitute(tmp, 1) 
+        w[j] = Xor3(tmp, Move(w[j-13],7), w[j-6])
+    for j in range(64):
+        w[j+68] = Xor(w[j],w[j+4])
+    for i in w:
+        w[i] = ZtoH(w[i])
+    return w
+
+
 
 def FF(x,y,z,j):
-    if(j>=0)&(j<=15):
-        return XOR2(XOR2(x,y),z)
+    if((j>=0)&(j<=15)):
+        ans = Xor3(x,y,z)
     else:
+        ans = Or3(And(x,y),And(x,z),And(y,z))
+    return ans
 
-        return OR2( OR2(AND2(x,y), AND2(x,z)) , AND2(y,z))
 
 def GG(x,y,z,j):
-    if(j>=0)&(j<=15):
-        return XOR2(XOR2(x,y),z)
+    if((j>=0)&(j<=15)):
+        ans = Xor3(x,y,z)
     else:
-        return OR2(AND2(x,y),AND2(NOT2(x),z))
+        ans = Or(And(x,y),And(Not(x),z))
+    return ans
 
 
-class sm3:
-    def __init__(self , words):#先不考虑接收服务器的数据。    #客户端的元素words:List
-        afterfill=self.Fill(words)
-        self.end=self.Iteration(afterfill)
 
+def Compress(w,IV):
+  
+    A = IV[0:8]
+    B = IV[8:16]
+    C = IV[16:24]
+    D = IV[24:32]
+    E = IV[32:40]
+    F = IV[40:48]
+    G = IV[48:56]
+    H = IV[56:64]
 
-    def Fill(self,msg):
-        if msg.isalpha():
-            msg_bin=''.join([bin(ord(c)).replace('0b', '0') for c in msg]) #字母ASCII：65-122，2^6=64 2^7=128，7位可表示，添一位
-        # else:#十六进制
-        #     msg_bin=''.join( [ bin(int(msg[i:i+2],10)).replace('0b', '00')   for i in range(len(msg)//16)])
+    SS1 = ''
+    SS2 = ''
+    TT1 = ''
+    TT2 = ''
+    
+    for j in range(64):
+        if int(j)<=15:
+            T = '79cc4519' 
         else:
-            raise ValueError("plz input msg with alpha")
-        length=bin(len(msg_bin))[2:]
+            T = '7a879d8a'
+
+        tmp = int(Move(HtoB(A),12), 2) + int(HtoB(E), 2) + int(Move(HtoB(T),j%32), 2) 
+        tmp = Mod32(tmp, 0)
+        SS1 = Move(OtoB(tmp), 7)
+        SS2 = Xor(SS1, Move(HtoB(A),12))
 
 
-        #+1
-        msg_bin+='1'
-
-        #+0
-        # len0=   #这里可以直接计算一下。。也可以循环填入
-        while len(msg_bin)%512 !=448:
-            msg_bin+='0'
-
-        #+len(msg)
-        msg_bin=msg_bin+'0'*(64-len(length))+length
-        return msg_bin
+        tmp = int(FF(HtoB(A),HtoB(B),HtoB(C),j),2) + int(HtoB(D),2) + int(SS2,2) + int(HtoB(w[j+68]),2)
+        tmp = Mod32(tmp,0)
+        TT1 = int(tmp,10)
 
 
-    #消息拓展
-    def expand(self,msg_bin):
-        W={}
-        for i in range(16):
-            W[i]=msg_bin[i*32:(i+1)*32]
-        for j in range(16,68):
-            y2=utils.XOR2(W[j-16],W[j-9])
-            y3=utils.XOR2(y2,utils.left(W[j-3],15))
-            y4=utils.P1(y3)
-            y5=utils.XOR2(y4,utils.left(W[j-13],7))
-            y6=utils.XOR2(y5,W[j-6])
-            W[j]=y6
-        for k in range(64):
-            W[k+68]=utils.XOR2(W[k],W[k+4])
+        tmp = int(GG(HtoB(E),HtoB(F),HtoB(G),j),2) + int(HtoB(H),2) + int(SS1,2) + int(HtoB(w[j]),2)
+        tmp = Mod32(tmp,0)
+        TT2 = int(tmp,10)
+
+        D = C
+
+        C = ZtoH(Move(HtoB(B),9))
+
+        B = A
+
+        A = OtoH(TT1)
+
+        H = G
+
+        G = ZtoH(Move(HtoB(F),19))
+
+        F = E
+
+        E = ZtoH(Substitute(OtoB(TT2),0))
+
+    r = A+B+C+D+E+F+G+H
+    r = HtoB(r)
+    v = HtoB(IV)
+    return BtoH(Xor(r,v))
 
 
-        return W
+if __name__ == "__main__":
+    c = 'abc' 
+    c_2='defj'
+    
+    m = Fill(c)
+    m_2=Fill(c_2)
+    c_3=m+c_2
 
+    w = Expand(m)
+    h_1 = Iteration(m,w)
 
-
-    def Iteration(self,m):#输入二进制字符串
-        V={}
-        V[0]=IV
-        n=len(m)//512
-        B={}
-        for i in range(n):
-            B[i]=m[i*512 : (i+1)*512]
-            W=self.expand(B[i])
-
-            V[i+1]=self.compress(V[i],W)
-        return V[n]
-
-    def compress(self,V,W):
-        A = bin(int(V[0:8],16))[2:].zfill(32)#不足32要填充0
-        B = bin(int(V[8:16],16))[2:].zfill(32)
-        C = bin(int(V[16:24],16))[2:].zfill(32)
-        D = bin(int(V[24:32],16))[2:].zfill(32)
-        E = bin(int(V[32:40],16))[2:].zfill(32)
-        F = bin(int(V[40:48],16))[2:].zfill(32)
-        G = bin(int(V[48:56],16))[2:].zfill(32)
-        H = bin(int(V[56:64],16))[2:].zfill(32)
-
-        for j in range(64):
-            if j<=15:
-                Tj =bin(int('79cc4519',16))[2:].zfill(32)
-            else:
-                Tj =bin(int('7a879d8a',16))[2:].zfill(32)
-
-            tmp=(int(utils.left(A,12),2)+int(E,2)+int(utils.left(Tj,j%32),2))%(2**32)
-            SS1=utils.left(bin(tmp)[2:].zfill(32),7)
-
-            SS2=utils.XOR2(SS1,utils.left(A,12))
-
-            tmp=(int(utils.FF(A,B,C,j),2)+int(D,2)+int(SS2,2)+int(W[j+68],2))%(2**32)
-            TT1=bin(tmp)[2:].zfill(32)
-
-
-            tmp=(int(utils.GG(E,F,G,j),2)+int(H,2)+int(SS1,2)+int(W[j],2))%(2**32)
-            TT2=bin(tmp)[2:].zfill(32)
-
-
-            D=C
-            C=utils.left(B,9)
-            B=A
-            A=TT1
-            H=G
-            G=utils.left(F,19)
-            F=E
-            E=utils.P0(TT2)
-
-
-        tmp=A+B+C+D+E+F+G+H
-        V=bin(int(V,16))[2:]
-        return hex(int(utils.XOR2(tmp,V), 2))[2:]
-
-    @property
-    def label(self):
-      return self.end
-
-
-
-
-if __name__=='__main__':
-    # message='abc'
-    message='abcd'*16
-
-    print(sm3(message).label)
+    w_2=Expand(m_2)
+    h_2=Iteration(w_2,h_1) #SM3(c_2,SM3(IV,c))
+    
+    m_3=Fill(c_3)
+    w_3=Expand(m_3)
+    h_3=Iteration(m_3,w_3)  #SM3(c+padding+c_2,IV)
+    
+    print(h_2)
+    print(h_3)
+    if h_3==h_2:
+        print("Success!")
+    else:
+        print("Fales!")
