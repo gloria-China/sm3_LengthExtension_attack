@@ -26,59 +26,59 @@ def Fill(text):
     text_bin = text_bin + length_bin
 
     return text_bin
-def Fill2(text1,text2):#c+padding+len_c+c_2
-    text_bin2 = ''
-    text_bin1 = ''
+#def Fill2(text1,text2):#c+padding+len_c+c_2
+#    text_bin2 = ''
+#    text_bin1 = ''
     # text to bin
-    for ch1 in text1:
-        ascii_ch1 = ord(ch1)
-        text_bin1 = text_bin1 + '0' + bin(ascii_ch1)[2:]
-    for ch2 in text2:
-        ascii_ch2 = ord(ch2)
-        text_bin2 = text_bin2 + '0' + bin(ascii_ch2)[2:]
+#    for ch1 in text1:
+#        ascii_ch1 = ord(ch1)
+#        text_bin1 = text_bin1 + '0' + bin(ascii_ch1)[2:]
+#    for ch2 in text2:
+#        ascii_ch2 = ord(ch2)
+#        text_bin2 = text_bin2 + '0' + bin(ascii_ch2)[2:]
 
     # add 1
-    length1=len(text_bin1)
-    length2=len(text_bin2)
-    text_bin1 = text_bin1 + '1'
-    length = len(text_bin2)+len(text_bin1)
+#    length1=len(text_bin1)
+#    length2=len(text_bin2)
+#    text_bin1 = text_bin1 + '1'
+#    length = len(text_bin2)+len(text_bin1)
     
     # add 0
-    while len(text_bin1)%512!=448:
-        text_bin1 += '0'
+#    while len(text_bin1)%512!=448:
+#        text_bin1 += '0'
  
-    length_bin = bin(length)[2:]
-    length_bin1=bin(length1)[2:]
-    length_bin2=bin(length2)[2:]
+#    length_bin = bin(length)[2:]
+#    length_bin1=bin(length1)[2:]
+#    length_bin2=bin(length2)[2:]
 
-    addm=length_bin2+text_bin2+length_bin
+#   addm=length_bin2+text_bin2+length_bin
 
-    while len(addm)<64:
-            addm = '0' + addm
+#    while len(addm)<64:
+ #           addm = '0' + addm
 
-    text_bin22 = text_bin1+addm
+ #   text_bin22 = text_bin1+addm
 
-    return text_bin22
+  #  return text_bin22
 
-def Fill_part(text3):
-    text_bin3 = ''
+#def Fill_part(text3):
+#    text_bin3 = ''
     # text to bin
-    for ch3 in text3:
-        ascii_ch3 = ord(ch3)
-        text_bin3 = text_bin3 + '0' + bin(ascii_ch3)[2:]
+#    for ch3 in text3:
+#        ascii_ch3 = ord(ch3)
+#        text_bin3 = text_bin3 + '0' + bin(ascii_ch3)[2:]
     # add 1
-    length3 = len(text_bin3)
+#    length3 = len(text_bin3)
 
-    text_bin3 = text_bin3 + '1'
+#    text_bin3 = text_bin3 + '1'
 
     # add 0
-    length_bin3 = bin(length3)[2:]
+#    length_bin3 = bin(length3)[2:]
 
-    while len(length_bin3)<64:
-            length_bin3 = '0' + length_bin3
+#    while len(length_bin3)<64:
+#            length_bin3 = '0' + length_bin3
 
-    text_bin3 = text_bin3 + length_bin3
-    return text_bin3
+#    text_bin3 = text_bin3 + length_bin3
+ #   return text_bin3
 
 def Iteration(m,w):
 
@@ -353,8 +353,8 @@ if __name__ == "__main__":
     w_3=Expand(m_3)
     h_3=Iteration(m_3,w_3)  #SM3(c+padding+c_2,IV)
     
-    print(h_2)
-    print(h_3)
+    print("SM3(c_2,SM3(IV,c)): ",h_2)
+    print("SM3(c+padding+c_2,IV): ",h_3)
     if h_3==h_2:
         print("Success!")
     else:
