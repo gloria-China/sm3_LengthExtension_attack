@@ -11,4 +11,5 @@
 SM3(c_2,SM3(IV,c)):  7380166f4914b2b9172442d7da8a0600a96f30bc163138aae38dee4db0fb0e4e  
 SM3(c+padding+c_2,IV):  b47645341de94064e70aa34b0102a9bfb9ce4ee25f4e67639c67adf3d82d1234  
 Fales!  
-![image](https://github.com/gloria-China/sm3_LengthExtension_attack/blob/main/images/sm3.jpg)
+![image]([https://github.com/gloria-China/sm3_LengthExtension_attack/blob/main/images/sm3.jpg])
+
