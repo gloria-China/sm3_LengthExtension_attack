@@ -1,3 +1,4 @@
+![success](https://user-images.githubusercontent.com/95696046/182006589-1fa276dd-aa5d-44d9-a989-2f95ade53cad.jpg)
 用长度扩展攻击寻找sm3的碰撞。  
 完成人：本人。  
 原理：已知SM3是MD结构的，且为大端存储，有SM3(IV, salt+data+padding+append) = SM3(SM3(IV, salt+data), append)构成了碰撞。  
@@ -11,5 +12,5 @@ SM3(c_2,SM3(IV,c)):  7380166f4914b2b9172442d7da8a0600a96f30bc163138aae38dee4db0f
 SM3(c+padding+c_2,IV):  7380166f4914b2b9172442d7da8a0600a96f30bc163138aae38dee4db0fb0e4e  
 Success!  
  
-![image]([https://github.com/gloria-China/sm3_LengthExtension_attack/blob/main/images/success.jpg])
+
 
